@@ -9,7 +9,7 @@ OptionParser.new do |opts|
   options[:number] = 1
   options[:quality] = "A"
   
-  opts.banner = "wl: Will's Libary of Will. http://github.com/willpearse/wl\nUsage: wl.rb [options]"
+  opts.banner = "Xena: Downloading a particular bird's call from Xeno-Canto. http://github.com/willpearse/Xena\nUsage: xena.rb [options]"
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit

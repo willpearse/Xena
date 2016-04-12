@@ -7,7 +7,7 @@ require 'nokogiri'
 #Argument handling
 options = {}
 OptionParser.new do |opts|
-  opts.banner = "wl: Will's Libary of Will. http://github.com/willpearse/wl\nUsage: wl.rb [options]"
+  opts.banner = "Xena_Scrape: Downloading lots of bird calls from Xeno-Canto. http://github.com/willpearse/Xena\nUsage: xena_scrape.rb [options]"
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
     exit
