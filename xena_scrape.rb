@@ -12,20 +12,26 @@ OptionParser.new do |opts|
     puts opts
     exit
   end
+
+  #Defaults
+  options[:count] = 5
+  options[:sleep] = 5
+  
   opts.on("-f FILE", "--file FILE", "File with birds to search") {|x| options[:file] = x.to_s}
   opts.on("-o FILE", "--output FILE", "Name of output") {|x| options[:output] = x.to_s}
   opts.on("-c NUMBER", "--count NUMBER", "Number of records to download (max)") {|x| options[:count] = x.to_i}
+  opts.on("-s SLEEP", "--sleep NUMBER", "Number of seconds to sleep between checks (multiplied if error)") {|x| options[:sleep] = x.to_i}
   opts.on("-")
 end.parse!
 
 File.open(options[:output], "w") do |handle|
   open(options[:file]).each do |bird|
     begin    
-      output = Hash[["search","id","gen","sp","ssp","en","rec","cnt","loc","lat","lng","type","file","lic","url","q","Date","Time","Elevation","Background","Length","Sampling rate","Comments"].collect { |v| [v, []] }]
+      output = Hash[["search","id","gen","sp","ssp","en","rec","cnt","loc","lat","lng","type","file","lic","url","q","date","time","Elevation","Background","Length","Sampling rate","Comments"].collect { |v| [v, []] }]
       
       url = URI.encode "http://www.xeno-canto.org/api/2/recordings?query=#{bird.chomp} q:A"
       result = JSON.parse(open(url).read)
-      
+
       result["recordings"].each_with_index do |record, i|
         unless i < options[:count] then break end
         output["search"].push bird.chomp
@@ -36,6 +42,7 @@ File.open(options[:output], "w") do |handle|
         page = Nokogiri::HTML(open(record["url"]))
         #Table entries
         curr_key = ""
+        
         page.css("td").each do |entry|
           unless curr_key.empty? then output[curr_key] = entry.text end
           if output.keys.include?(entry.text)
@@ -59,10 +66,10 @@ File.open(options[:output], "w") do |handle|
         handle << "#{output.keys.map {|x| output[x][i].to_s}.join(",")}\n"
       end
       puts bird
-      sleep 30
+      sleep options[:sleep]
     rescue
       puts "Server error"
-      sleep 300
+      sleep options[:sleep]*10
     end
   end
 end
